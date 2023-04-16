@@ -1,40 +1,29 @@
 import "./Expenses.css";
-import ExpenseItem from "./ExpenseItem";
+import ExpensesList from "./ExpensesList";
 import Card from "../UI/Card";
 import ExpensesFilter from "./ExpensesFilter";
 import { useState } from "react";
 
 const Expenses = (props) => {
-  const [selectedYear, setSelectedYear] = useState('2020');
+  const [filteredYear, setFilteredYear] = useState("2020");
 
   const filterChangeHandler = (selectedYear) => {
-    setSelectedYear(selectedYear);
-    console.log(selectedYear);
+    setFilteredYear(selectedYear);
   };
+
+  // filteredExpenses doesn't need to maintain state; all items state is already maintained at parent component
+  // whenever year is changed, filteredExpenses will be evaluated again
+  const filteredExpenses = props.items.filter((expense) => {
+    return expense.date.getFullYear().toString() === filteredYear;
+  });
 
   return (
     <Card className="expenses">
-      <ExpensesFilter selected={selectedYear} onChange={filterChangeHandler}></ExpensesFilter>
-      <ExpenseItem
-        title={props.items[0].title}
-        amount={props.items[0].amount}
-        date={props.items[0].date}
-      />
-      <ExpenseItem
-        title={props.items[1].title}
-        amount={props.items[1].amount}
-        date={props.items[1].date}
-      />
-      <ExpenseItem
-        title={props.items[2].title}
-        amount={props.items[2].amount}
-        date={props.items[2].date}
-      />
-      <ExpenseItem
-        title={props.items[3].title}
-        amount={props.items[3].amount}
-        date={props.items[3].date}
-      />
+      <ExpensesFilter
+        selected={filteredYear}
+        onChange={filterChangeHandler}
+      ></ExpensesFilter>
+      <ExpensesList items={filteredExpenses} />
     </Card>
   );
 };
